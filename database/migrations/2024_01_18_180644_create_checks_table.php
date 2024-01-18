@@ -11,13 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('sites', function (Blueprint $table) {
+        Schema::create('checks', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->string('url');
-            $table->string('user_id')->index();
+            $table->uuid('endpoint_id')->index();
+            $table->unsignedInteger('status_code');
+            $table->text('response_body')->nullable();
             $table->timestamps();
 
-            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('endpoint_id')->references('id')->on('endpoints');
         });
     }
 
@@ -26,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('sites');
+        Schema::dropIfExists('checks');
     }
 };
