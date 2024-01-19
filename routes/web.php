@@ -3,6 +3,8 @@
 use App\Http\Controllers\Admin\SiteController;
 use App\Http\Controllers\EndpointController;
 use App\Http\Controllers\ProfileController;
+use App\Jobs\EndpointCheckJob;
+use App\Models\Endpoint;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,6 +17,11 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('job', function(){
+    $endpoint = Endpoint::latest()->first();
+    EndpointCheckJob::dispatchSync($endpoint);
+});
+
 Route::middleware(['auth'])->prefix('admin')->group(function (){
 
     Route::resource('/sites/{site}/endpoints', EndpointController::class);
