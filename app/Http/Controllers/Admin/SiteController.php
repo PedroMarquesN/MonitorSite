@@ -22,10 +22,37 @@ class SiteController extends Controller
   public function store(StoreUpdateSiteRequest $request){
        // $user = Auth::user();
        $user = auth()->user();
-       $user->sites()->create($request->all());
+       $user->sites()->create($request->validated());
 
-       return redirect()->route('sites.index');
+       return redirect()
+                  ->route('sites.index')
+                  ->with('message', 'Site Criado com Sucesso.');
   }
 
+  public function edit(string $id){
+    if(!$site = Site::find($id)){
+        return back();
+    }
+
+    return view('admin/sites/edit', compact('site'));
+  }
+
+  public function update(StoreUpdateSiteRequest $request , Site $site){
+
+    $site->update($request->validated());
+
+    return redirect()
+            ->route('sites.index')
+            ->with('message', 'Site Atualizado com Sucesso.');
+  }
+
+  public function destroy(Site $site){
+    
+    $site->delete();
+
+    return redirect()
+            ->route('sites.index')
+            ->with('message', 'Site Deletado com Sucesso.');
+  }
 
 }
