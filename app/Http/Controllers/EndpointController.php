@@ -31,8 +31,9 @@ class EndpointController extends Controller
     public function store(StoreUpdateEndpointRequest $request , Site $site)
     {
 
-        $site->endpoints()->create($request->all());
-       
+        $data = $request->all();
+        $data['next_check'] = now();
+        $site->endpoints()->create($data);
 
         return redirect()
                 ->route('endpoints.index', $site->id)
