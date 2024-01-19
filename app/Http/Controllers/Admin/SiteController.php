@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Auth;
 class SiteController extends Controller
 {
   public function index(){
-    $sites = Site::get();
+    $sites = Site::paginate(2);
     return view('admin/sites/index', compact('sites'));
   }
   public function create(){
