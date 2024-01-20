@@ -11,10 +11,12 @@ class EndpointController extends Controller
 {
     public function index(string $siteId){
         
-        $site = Site::with('endpoints')->find($siteId);
+        $site = Site::with('endpoints.check')->find($siteId);
         if(!$site){
             return back();
         }
+
+        $this->authorize('owner', $site);
         $endpoints = $site->endpoints;
         
         return view('admin.endpoints.index', compact('site', 'endpoints'));
@@ -25,12 +27,13 @@ class EndpointController extends Controller
         if(!$site = Site::find($siteId)){
             return back();
         }
+        $this->authorize('owner', $site);
         return view('admin.endpoints.create', compact('site'));
     }
 
     public function store(StoreUpdateEndpointRequest $request , Site $site)
     {
-
+        $this->authorize('owner', $site);
         $data = $request->all();
         $data['next_check'] = now();
         $site->endpoints()->create($data);
@@ -42,19 +45,22 @@ class EndpointController extends Controller
 
     public function edit(Site $site, Endpoint $endpoint)
     {
+        $this->authorize('owner', $site);
         return view('admin.endpoints.edit', compact('site', 'endpoint'));
     }
 
     public function update(StoreUpdateEndpointRequest $request, Site $site, Endpoint $endpoint)
     {
+        $this->authorize('owner', $site);
         $endpoint->update($request->validated());
         return redirect()
         ->route('endpoints.index', $site->id)
         ->with('message','Atualizado com Sucesso');
     }
     
-    public function destroy(Site $site, Endpoint $endpoint){
-
+    public function destroy(Site $site, Endpoint $endpoint)
+    {
+        $this->authorize('owner', $site);
         $endpoint->delete();
 
         return redirect()
